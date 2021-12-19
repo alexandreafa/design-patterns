@@ -6,7 +6,7 @@ abstract class Componente {
 
   /**
    * Opcionalmente, o componente base pode declarar uma interface para configuração e
-   * acessando um pai do componente em uma estrutura de árvore.
+   * acessar um pai do componente em uma estrutura de árvore.
    * Também pode fornecer alguma implementação padrão para esses métodos.
    */
   public setPai(pai: Componente) {
@@ -33,7 +33,7 @@ abstract class Componente {
    * Você pode fornecer um método que permite ao código do cliente
    * descobrir se um componente pode gerar filhos.
    */
-  public ehComposto(): boolean {
+  public isComposite(): boolean {
     return false;
   }
 
@@ -49,7 +49,7 @@ abstract class Componente {
  * A classe Folha representa os objetos finais de uma composição. Uma folha
  * não pode ter filhos.
  * Normalmente, são os objetos Folha que fazem o trabalho real,
- * enquanto os objetos Composto apenas delegam a seus subcomponentes.
+ * enquanto os objetos Composite apenas delegam a seus subcomponentes.
  */
 class Folha extends Componente {
   public operacao(): string {
@@ -79,16 +79,15 @@ class Composite extends Componente {
     componente.setPai(null);
   }
 
-  public ehComposto(): boolean {
+  public isComposite(): boolean {
     return true;
   }
 
   /**
-   * O Composite executa sua lógica primária de uma maneira particular. Ele
-   * percorre recursivamente todos os seus filhos, coletando e somando seus
-   * resultados. Como os filhos do composto passam essas chamadas para seus
-   * filhos e assim por diante, toda a árvore de objetos é percorrida como
-   * resultado.
+   * O Composite percorre recursivamente todos os seus filhos, coletando 
+   * e somando seus resultados. Como os filhos do composto passam essas 
+   * chamadas para seus filhos e assim por diante, toda a árvore de objetos 
+   * é percorrida como resultado.
    */
   public operacao(): string {
     const resultados = [];
@@ -134,7 +133,7 @@ console.log("");
  */
 function codigoCliente2(componente1: Componente, componente2: Componente) {
 
-  if (componente1.ehComposto()) {
+  if (componente1.isComposite()) {
     componente1.adicionar(componente2);
   }
   console.log(`RESULTADO: ${componente1.operacao()}`);
