@@ -45,8 +45,8 @@ abstract class Componente {
   public abstract operacao(): string;
 }
 
-/**  
- * A classe Folha representa os objetos finais de uma composição. Uma folha 
+/**
+ * A classe Folha representa os objetos finais de uma composição. Uma folha
  * não pode ter filhos.
  * Normalmente, são os objetos Folha que fazem o trabalho real,
  * enquanto os objetos Composto apenas delegam a seus subcomponentes.
@@ -104,19 +104,14 @@ class Composite extends Componente {
 interface base. */
 
 function codigoCliente(componente: Componente) {
-  // ...
-
   console.log(`RESULTADO: ${componente.operacao()}`);
-
-  // ...
 }
 
- // Assim, o código do cliente pode suportar os componentes de folha simples...
+// Assim, o código do cliente pode suportar os componentes de folha simples...
 const simples = new Folha();
 console.log("Cliente: Tenho um componente simples:");
 codigoCliente(simples);
 console.log("");
-
 
 // ...bem como os compostos complexos.
 const arvore = new Composite();
@@ -132,20 +127,18 @@ codigoCliente(arvore);
 console.log("");
 
 /**
- * Graças ao fato de que as operações de gerenciamento de filhos 
- * são declaradas na classe Component base, o código do cliente pode 
- * rabalhar com qualquer componente, simples ou complexo, sem depender 
+ * Graças ao fato de que as operações de gerenciamento de filhos
+ * são declaradas na classe Component base, o código do cliente pode
+ * rabalhar com qualquer componente, simples ou complexo, sem depender
  * de suas classes concretas.
  */
 function codigoCliente2(componente1: Componente, componente2: Componente) {
-  // ...
 
   if (componente1.ehComposto()) {
     componente1.adicionar(componente2);
   }
   console.log(`RESULTADO: ${componente1.operacao()}`);
 
-  // ...
 }
 
 console.log(
