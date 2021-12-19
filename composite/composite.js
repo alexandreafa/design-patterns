@@ -1,3 +1,5 @@
+/* A classe de Component base declara operações comuns para
+objetos simples e complexos de uma composição */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -13,144 +15,131 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-/**
- * The base Component class declares common operations for both simple and
- * complex objects of a composition.
- */
-var Component = /** @class */ (function () {
-    function Component() {
+var Componente = /** @class */ (function () {
+    function Componente() {
     }
     /**
-     * Optionally, the base Component can declare an interface for setting and
-     * accessing a parent of the component in a tree structure. It can also
-     * provide some default implementation for these methods.
+     * Opcionalmente, o componente base pode declarar uma interface para configuração e
+     * acessando um pai do componente em uma estrutura de árvore.
+     * Também pode fornecer alguma implementação padrão para esses métodos.
      */
-    Component.prototype.setParent = function (parent) {
-        this.parent = parent;
+    Componente.prototype.setPai = function (pai) {
+        this.pai = pai;
     };
-    Component.prototype.getParent = function () {
-        return this.parent;
+    Componente.prototype.getPai = function () {
+        return this.pai;
     };
     /**
-     * In some cases, it would be beneficial to define the child-management
-     * operations right in the base Component class. This way, you won't need to
-     * expose any concrete component classes to the client code, even during the
-     * object tree assembly. The downside is that these methods will be empty
-     * for the leaf-level components.
+     * Em alguns casos, seria benéfico definir operações de gerenciamento de
+     * classes filhas direto na classe base.
+     * Dessa forma, você não precisará expor nenhuma classe de componente
+     * concreta ao código do cliente, mesmo durante a montagem da árvore de
+     * objetos. A desvantagem é que esses métodos estarão vazios para os
+     * componentes de nível folha.
      */
-    Component.prototype.add = function (component) { };
-    Component.prototype.remove = function (component) { };
+    Componente.prototype.adicionar = function (componente) { };
+    Componente.prototype.remover = function (componente) { };
     /**
-     * You can provide a method that lets the client code figure out whether a
-     * component can bear children.
+     * Você pode fornecer um método que permite ao código do cliente
+     * descobrir se um componente pode gerar filhos.
      */
-    Component.prototype.isComposite = function () {
+    Componente.prototype.ehComposto = function () {
         return false;
     };
-    return Component;
+    return Componente;
 }());
 /**
- * The Leaf class represents the end objects of a composition. A leaf can't have
- * any children.
- *
- * Usually, it's the Leaf objects that do the actual work, whereas Composite
- * objects only delegate to their sub-components.
+ * A classe Folha representa os objetos finais de uma composição. Uma folha
+ * não pode ter filhos.
+ * Normalmente, são os objetos Folha que fazem o trabalho real,
+ * enquanto os objetos Composto apenas delegam a seus subcomponentes.
  */
-var Leaf = /** @class */ (function (_super) {
-    __extends(Leaf, _super);
-    function Leaf() {
+var Folha = /** @class */ (function (_super) {
+    __extends(Folha, _super);
+    function Folha() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    Leaf.prototype.operation = function () {
-        return 'Leaf';
+    Folha.prototype.operacao = function () {
+        return "Folha";
     };
-    return Leaf;
-}(Component));
-/**
- * The Composite class represents the complex components that may have children.
- * Usually, the Composite objects delegate the actual work to their children and
- * then "sum-up" the result.
+    return Folha;
+}(Componente));
+/* A classe Composite representa os componentes complexos que podem ter filhos.
+ * Normalmente, os objetos Composite delegam o trabalho real a seus filhos e,
+ * em seguida, "somam" o resultado.
  */
 var Composite = /** @class */ (function (_super) {
     __extends(Composite, _super);
     function Composite() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.children = [];
+        _this.filha = [];
         return _this;
     }
-    /**
-     * A composite object can add or remove other components (both simple or
-     * complex) to or from its child list.
+    /** Um objeto composto pode adicionar ou remover outros componentes
+     * (simples ou complexos) para ou [a partir] de sua lista de filhos.
      */
-    Composite.prototype.add = function (component) {
-        this.children.push(component);
-        component.setParent(this);
+    Composite.prototype.adicionar = function (componente) {
+        this.filha.push(componente);
+        componente.setPai(this);
     };
-    Composite.prototype.remove = function (component) {
-        var componentIndex = this.children.indexOf(component);
-        this.children.splice(componentIndex, 1);
-        component.setParent(null);
+    Composite.prototype.remover = function (componente) {
+        var indiceComponente = this.filha.indexOf(componente);
+        this.filha.splice(indiceComponente, 1);
+        componente.setPai(null);
     };
-    Composite.prototype.isComposite = function () {
+    Composite.prototype.ehComposto = function () {
         return true;
     };
     /**
-     * The Composite executes its primary logic in a particular way. It
-     * traverses recursively through all its children, collecting and summing
-     * their results. Since the composite's children pass these calls to their
-     * children and so forth, the whole object tree is traversed as a result.
+     * O Composite executa sua lógica primária de uma maneira particular. Ele
+     * percorre recursivamente todos os seus filhos, coletando e somando seus
+     * resultados. Como os filhos do composto passam essas chamadas para seus
+     * filhos e assim por diante, toda a árvore de objetos é percorrida como
+     * resultado.
      */
-    Composite.prototype.operation = function () {
-        var results = [];
-        for (var _i = 0, _a = this.children; _i < _a.length; _i++) {
-            var child = _a[_i];
-            results.push(child.operation());
+    Composite.prototype.operacao = function () {
+        var resultados = [];
+        for (var _i = 0, _a = this.filha; _i < _a.length; _i++) {
+            var filha = _a[_i];
+            resultados.push(filha.operacao());
         }
-        return "Branch(".concat(results.join('+'), ")");
+        return "Ramo(".concat(resultados.join("+"), ")");
     };
     return Composite;
-}(Component));
-/**
- * The client code works with all of the components via the base interface.
- */
-function clientCode(component) {
-    // ...
-    console.log("RESULT: ".concat(component.operation()));
-    // ...
+}(Componente));
+/* O código do cliente funciona com todos os componentes por meio da
+interface base. */
+function codigoCliente(componente) {
+    console.log("RESULTADO: ".concat(componente.operacao()));
 }
+// Assim, o código do cliente pode suportar os componentes de folha simples...
+var simples = new Folha();
+console.log("Cliente: Tenho um componente simples:");
+codigoCliente(simples);
+console.log("");
+// ...bem como os compostos complexos.
+var arvore = new Composite();
+var ramo1 = new Composite();
+ramo1.adicionar(new Folha());
+ramo1.adicionar(new Folha());
+var ramo2 = new Composite();
+ramo2.adicionar(new Folha());
+arvore.adicionar(ramo1);
+arvore.adicionar(ramo2);
+console.log("Cliente: Agora tenho uma árvore composta:");
+codigoCliente(arvore);
+console.log("");
 /**
- * This way the client code can support the simple leaf components...
+ * Graças ao fato de que as operações de gerenciamento de filhos
+ * são declaradas na classe Component base, o código do cliente pode
+ * rabalhar com qualquer componente, simples ou complexo, sem depender
+ * de suas classes concretas.
  */
-var simple = new Leaf();
-console.log('Client: I\'ve got a simple component:');
-clientCode(simple);
-console.log('');
-/**
- * ...as well as the complex composites.
- */
-var tree = new Composite();
-var branch1 = new Composite();
-branch1.add(new Leaf());
-branch1.add(new Leaf());
-var branch2 = new Composite();
-branch2.add(new Leaf());
-tree.add(branch1);
-tree.add(branch2);
-console.log('Client: Now I\'ve got a composite tree:');
-clientCode(tree);
-console.log('');
-/**
- * Thanks to the fact that the child-management operations are declared in the
- * base Component class, the client code can work with any component, simple or
- * complex, without depending on their concrete classes.
- */
-function clientCode2(component1, component2) {
-    // ...
-    if (component1.isComposite()) {
-        component1.add(component2);
+function codigoCliente2(componente1, componente2) {
+    if (componente1.ehComposto()) {
+        componente1.adicionar(componente2);
     }
-    console.log("RESULT: ".concat(component1.operation()));
-    // ...
+    console.log("RESULTADO: ".concat(componente1.operacao()));
 }
-console.log('Client: I don\'t needd to check the components classes even when managing the tree:');
-clientCode2(tree, simple);
+console.log("Cliente: Não preciso verificar as classes dos componentes, mesmo ao gerenciar a árvore:");
+codigoCliente2(arvore, simples);
