@@ -45,10 +45,9 @@ abstract class Componente {
   public abstract operacao(): string;
 }
 
-/**
- * A classe Folha representa os objetos finais de uma composição.
- * Uma folha não pode ter filhos.
- *
+/**  
+ * A classe Folha representa os objetos finais de uma composição. Uma folha 
+ * não pode ter filhos.
  * Normalmente, são os objetos Folha que fazem o trabalho real,
  * enquanto os objetos Composto apenas delegam a seus subcomponentes.
  */
@@ -58,16 +57,14 @@ class Folha extends Componente {
   }
 }
 
-/**
- * A classe Composite representa os componentes complexos que podem ter filhos.
+/* A classe Composite representa os componentes complexos que podem ter filhos.
  * Normalmente, os objetos Composite delegam o trabalho real a seus filhos e,
  * em seguida, "somam" o resultado.
  */
 class Composite extends Componente {
   protected filha: Componente[] = [];
 
-  /**
-   * Um objeto composto pode adicionar ou remover outros componentes
+  /** Um objeto composto pode adicionar ou remover outros componentes
    * (simples ou complexos) para ou [a partir] de sua lista de filhos.
    */
   public adicionar(componente: Componente): void {
@@ -103,10 +100,9 @@ class Composite extends Componente {
   }
 }
 
-/**
- * O código do cliente funciona com todos os componentes por meio da
- * interface base.
- */
+/* O código do cliente funciona com todos os componentes por meio da
+interface base. */
+
 function codigoCliente(componente: Componente) {
   // ...
 
@@ -115,17 +111,14 @@ function codigoCliente(componente: Componente) {
   // ...
 }
 
-/**
- * Assim, o código do cliente pode suportar os componentes de folha simples...
- */
+ // Assim, o código do cliente pode suportar os componentes de folha simples...
 const simples = new Folha();
 console.log("Cliente: Tenho um componente simples:");
 codigoCliente(simples);
 console.log("");
 
-/**
- * ...bem como os compostos complexos.
- */
+
+// ...bem como os compostos complexos.
 const arvore = new Composite();
 const ramo1 = new Composite();
 ramo1.adicionar(new Folha());
