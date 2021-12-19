@@ -1,156 +1,161 @@
-/**
- * The base Component class declares common operations for both simple and
- * complex objects of a composition.
- */
- abstract class Component {
-    protected parent: Component;
+/* A classe de Component base declara operações comuns para 
+objetos simples e complexos de uma composição */
 
-    /**
-     * Optionally, the base Component can declare an interface for setting and
-     * accessing a parent of the component in a tree structure. It can also
-     * provide some default implementation for these methods.
-     */
-    public setParent(parent: Component) {
-        this.parent = parent;
-    }
+abstract class Componente {
+  protected pai: Componente;
 
-    public getParent(): Component {
-        return this.parent;
-    }
+  /**
+   * Opcionalmente, o componente base pode declarar uma interface para configuração e
+   * acessando um pai do componente em uma estrutura de árvore.
+   * Também pode fornecer alguma implementação padrão para esses métodos.
+   */
+  public setPai(pai: Componente) {
+    this.pai = pai;
+  }
 
-    /**
-     * In some cases, it would be beneficial to define the child-management
-     * operations right in the base Component class. This way, you won't need to
-     * expose any concrete component classes to the client code, even during the
-     * object tree assembly. The downside is that these methods will be empty
-     * for the leaf-level components.
-     */
-    public add(component: Component): void { }
+  public getPai(): Componente {
+    return this.pai;
+  }
 
-    public remove(component: Component): void { }
+  /**
+   * Em alguns casos, seria benéfico definir operações de gerenciamento de
+   * classes filhas direto na classe base.
+   * Dessa forma, você não precisará expor nenhuma classe de componente
+   * concreta ao código do cliente, mesmo durante a montagem da árvore de
+   * objetos. A desvantagem é que esses métodos estarão vazios para os
+   * componentes de nível folha.
+   */
+  public adicionar(componente: Componente): void {}
 
-    /**
-     * You can provide a method that lets the client code figure out whether a
-     * component can bear children.
-     */
-    public isComposite(): boolean {
-        return false;
-    }
+  public remover(componente: Componente): void {}
 
-    /**
-     * The base Component may implement some default behavior or leave it to
-     * concrete classes (by declaring the method containing the behavior as
-     * "abstract").
-     */
-    public abstract operation(): string;
+  /**
+   * Você pode fornecer um método que permite ao código do cliente
+   * descobrir se um componente pode gerar filhos.
+   */
+  public ehComposto(): boolean {
+    return false;
+  }
+
+  /**
+   * O componente base pode implementar algum comportamento padrão ou
+   * deixá-lo para classes concretas (declarando o método que contém o
+   * comportamento como "abstrato").
+   */
+  public abstract operacao(): string;
 }
 
 /**
- * The Leaf class represents the end objects of a composition. A leaf can't have
- * any children.
+ * A classe Folha representa os objetos finais de uma composição.
+ * Uma folha não pode ter filhos.
  *
- * Usually, it's the Leaf objects that do the actual work, whereas Composite
- * objects only delegate to their sub-components.
+ * Normalmente, são os objetos Folha que fazem o trabalho real,
+ * enquanto os objetos Composto apenas delegam a seus subcomponentes.
  */
-class Leaf extends Component {
-    public operation(): string {
-        return 'Leaf';
-    }
+class Folha extends Componente {
+  public operacao(): string {
+    return "Folha";
+  }
 }
 
 /**
- * The Composite class represents the complex components that may have children.
- * Usually, the Composite objects delegate the actual work to their children and
- * then "sum-up" the result.
+ * A classe Composite representa os componentes complexos que podem ter filhos.
+ * Normalmente, os objetos Composite delegam o trabalho real a seus filhos e,
+ * em seguida, "somam" o resultado.
  */
-class Composite extends Component {
-    protected children: Component[] = [];
+class Composite extends Componente {
+  protected filha: Componente[] = [];
 
-    /**
-     * A composite object can add or remove other components (both simple or
-     * complex) to or from its child list.
-     */
-    public add(component: Component): void {
-        this.children.push(component);
-        component.setParent(this);
+  /**
+   * Um objeto composto pode adicionar ou remover outros componentes
+   * (simples ou complexos) para ou [a partir] de sua lista de filhos.
+   */
+  public adicionar(componente: Componente): void {
+    this.filha.push(componente);
+    componente.setPai(this);
+  }
+
+  public remover(componente: Componente): void {
+    const indiceComponente = this.filha.indexOf(componente);
+    this.filha.splice(indiceComponente, 1);
+
+    componente.setPai(null);
+  }
+
+  public ehComposto(): boolean {
+    return true;
+  }
+
+  /**
+   * O Composite executa sua lógica primária de uma maneira particular. Ele
+   * percorre recursivamente todos os seus filhos, coletando e somando seus
+   * resultados. Como os filhos do composto passam essas chamadas para seus
+   * filhos e assim por diante, toda a árvore de objetos é percorrida como
+   * resultado.
+   */
+  public operacao(): string {
+    const resultados = [];
+    for (const filha of this.filha) {
+      resultados.push(filha.operacao());
     }
 
-    public remove(component: Component): void {
-        const componentIndex = this.children.indexOf(component);
-        this.children.splice(componentIndex, 1);
-
-        component.setParent(null);
-    }
-
-    public isComposite(): boolean {
-        return true;
-    }
-
-    /**
-     * The Composite executes its primary logic in a particular way. It
-     * traverses recursively through all its children, collecting and summing
-     * their results. Since the composite's children pass these calls to their
-     * children and so forth, the whole object tree is traversed as a result.
-     */
-    public operation(): string {
-        const results = [];
-        for (const child of this.children) {
-            results.push(child.operation());
-        }
-
-        return `Branch(${results.join('+')})`;
-    }
+    return `Ramo(${resultados.join("+")})`;
+  }
 }
 
 /**
- * The client code works with all of the components via the base interface.
+ * O código do cliente funciona com todos os componentes por meio da
+ * interface base.
  */
-function clientCode(component: Component) {
-    // ...
+function codigoCliente(componente: Componente) {
+  // ...
 
-    console.log(`RESULT: ${component.operation()}`);
+  console.log(`RESULTADO: ${componente.operacao()}`);
 
-    // ...
+  // ...
 }
 
 /**
- * This way the client code can support the simple leaf components...
+ * Assim, o código do cliente pode suportar os componentes de folha simples...
  */
-const simple = new Leaf();
-console.log('Client: I\'ve got a simple component:');
-clientCode(simple);
-console.log('');
+const simples = new Folha();
+console.log("Cliente: Tenho um componente simples:");
+codigoCliente(simples);
+console.log("");
 
 /**
- * ...as well as the complex composites.
+ * ...bem como os compostos complexos.
  */
-const tree = new Composite();
-const branch1 = new Composite();
-branch1.add(new Leaf());
-branch1.add(new Leaf());
-const branch2 = new Composite();
-branch2.add(new Leaf());
-tree.add(branch1);
-tree.add(branch2);
-console.log('Client: Now I\'ve got a composite tree:');
-clientCode(tree);
-console.log('');
+const arvore = new Composite();
+const ramo1 = new Composite();
+ramo1.adicionar(new Folha());
+ramo1.adicionar(new Folha());
+const ramo2 = new Composite();
+ramo2.adicionar(new Folha());
+arvore.adicionar(ramo1);
+arvore.adicionar(ramo2);
+console.log("Cliente: Agora tenho uma árvore composta:");
+codigoCliente(arvore);
+console.log("");
 
 /**
- * Thanks to the fact that the child-management operations are declared in the
- * base Component class, the client code can work with any component, simple or
- * complex, without depending on their concrete classes.
+ * Graças ao fato de que as operações de gerenciamento de filhos 
+ * são declaradas na classe Component base, o código do cliente pode 
+ * rabalhar com qualquer componente, simples ou complexo, sem depender 
+ * de suas classes concretas.
  */
-function clientCode2(component1: Component, component2: Component) {
-    // ...
+function codigoCliente2(componente1: Componente, componente2: Componente) {
+  // ...
 
-    if (component1.isComposite()) {
-        component1.add(component2);
-    }
-    console.log(`RESULT: ${component1.operation()}`);
+  if (componente1.ehComposto()) {
+    componente1.adicionar(componente2);
+  }
+  console.log(`RESULTADO: ${componente1.operacao()}`);
 
-    // ...
+  // ...
 }
 
-console.log('Client: I don\'t need to check the components classes even when managing the tree:');
-clientCode2(tree, simple);
+console.log(
+  "Cliente: Não preciso verificar as classes dos componentes, mesmo ao gerenciar a árvore:"
+);
+codigoCliente2(arvore, simples);
